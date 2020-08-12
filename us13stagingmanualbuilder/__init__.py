@@ -6,13 +6,7 @@ from . import logger
 with open("config.json") as f:
     CONFIG = json.load(f)
 
-envs = ["SSH_PRIVATE_KEY",
-        "HUB_USERNAME",
-        "SSH_USER",
-        "SSH_KNOWN_HOSTS",
-        "HUB_PASSWORD",
-        "ERROR_WEBHOOK",
-        "CDN_HOST",
+envs = ["CDN_HOST",
         "CDN_USER",
         "DOCKER_USERNAME",
         "DOCKER_PASSWORD"]
@@ -80,19 +74,9 @@ def check_license_file():
         raise Exception("Missing license file")
 
 
-def clean_builds_folder():
-    if os.path.isdir(CONFIG['output_dir']):
-        try:
-            logger.log("Cleaning builds folder...")
-            shutil.rmtree(CONFIG["output_dir"])
-        except Exception as e:
-            logger.log(str(e))
-
-
 ##########
 load_envs_from_json()
 check_envs()
 check_config_file()
 check_dirs()
 check_license_file()
-clean_builds_folder()

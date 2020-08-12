@@ -3,6 +3,7 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 import json
 import requests
+import shutil
 
 exec_name = {
     "StandaloneWindows64": "Unitystation.exe",
@@ -134,9 +135,21 @@ def set_jsons_data():
         json.dump(p_config_json, json_data, indent=4)
 
 
+def clean_builds_folder():
+    for target in CONFIG['target_platform']:
+        folder = os.path.join(CONFIG["output_dir"], target)
+
+        if os.path.isdir(folder):
+            try:
+                shutil.rmtree(folder)
+            except Exception as e:
+                logger.log((str(e)))
+
+
 def start_building():
     logger.log("Starting build process...")
     get_build_number()
+    clean_builds_folder()
     create_builds_folder()
     set_jsons_data()
 
