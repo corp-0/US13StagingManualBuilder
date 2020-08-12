@@ -6,9 +6,8 @@ with open("config.json") as f:
     CONFIG = json.load(f)
 
 envs = ["CDN_HOST",
-        "CDN_USER",
-        "DOCKER_USERNAME",
-        "DOCKER_PASSWORD"]
+        "CDN_USER"
+        "CDN_PASSWORD"]
 
 req_configs = ["unity_executable",
                "project_path",
