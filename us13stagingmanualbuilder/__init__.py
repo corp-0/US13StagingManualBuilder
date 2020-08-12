@@ -1,6 +1,5 @@
 import json
 import os
-import shutil
 from . import logger
 
 with open("config.json") as f:
@@ -70,7 +69,7 @@ def check_dirs():
 
 def check_license_file():
     if not os.path.isfile(CONFIG["license_file"]):
-        logger.log("Couldn't find the declared unity_license! Try creating a new one if you havem't yet.")
+        logger.log("Couldn't find the declared unity_license! Try creating a new one if you haven't yet.")
         raise Exception("Missing license file")
 
 

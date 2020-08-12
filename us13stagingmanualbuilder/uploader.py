@@ -9,25 +9,14 @@ def upload_to_cdn():
 
     try:
         logger.log("Trying to connect to CDN")
-        ftp.connect(CONFIG["CDN_HOST"], 21, timeout=20)
+        ftp.connect(CONFIG["CDN_HOST"], 21, timeout=60)
         ftp.login(CONFIG["CDN_USER"], CONFIG["CDN_PASSWORD"])
         logger.log(f"CDN says: {ftp.getwelcome()}")
         ftp.rmd(f"/unitystation/{CONFIG['forkName']}")
         ftp.mkd(f"/unitystation/{CONFIG['forkName']}")
 
         for target in CONFIG["target_platform"]:
-            ftp.mkd(f"/unitystation/{CONFIG['forkName']}/{target}/")
-
-            upload_path = f"/unitystation/{CONFIG['forkName']}/{target}/{str(CONFIG['build_number'])}.zip"
-            local_file = os.path.join(CONFIG["output_dir"], target, str(CONFIG["build_number"])+".zip")
-
-            try:
-                with open(local_file, "rb") as zip_file:
-                    logger.log(f"Uploading {target}...")
-                    ftp.storbinary(f"STOR {upload_path}", zip_file)
-            except all_errors as e:
-                logger.log(f"Error trying to upload {local_file}")
-                logger.log(str(e))
+            attempt_ftp_upload(ftp, target)
     except all_errors as e:
         logger.log(f"Found FTP error: {str(e)}")
         raise e
@@ -39,9 +28,26 @@ def upload_to_cdn():
     ftp.close()
 
 
+def attempt_ftp_upload(ftp, target):
+    ftp.mkd(f"/unitystation/{CONFIG['forkName']}/{target}/")
+    upload_path = f"/unitystation/{CONFIG['forkName']}/{target}/{str(CONFIG['build_number'])}.zip"
+    local_file = os.path.join(CONFIG["output_dir"], target + ".zip")
+    try:
+        with open(local_file, "rb") as zip_file:
+            logger.log(f"Uploading {target}...")
+            ftp.storbinary(f"STOR {upload_path}", zip_file)
+    except all_errors as e:
+        if "timed out" in str(e):
+            logger.log("FTP connection timed out, retrying...")
+            attempt_ftp_upload(ftp, target)
+        else:
+            logger.log(f"Error trying to upload {local_file}")
+            logger.log(str(e))
+
+
 def zip_build_folder(target: str):
     build_folder = f"{os.path.join(CONFIG['output_dir'], target)}"
-    output = f"{os.path.join(CONFIG['output_dir'], target, str(CONFIG['build_number']))}"
+    output = f"{os.path.join(CONFIG['output_dir'], target)}"
 
     zip_folder(output, 'zip', build_folder)
 

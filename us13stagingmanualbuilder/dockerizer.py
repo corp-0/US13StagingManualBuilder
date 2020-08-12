@@ -31,8 +31,6 @@ def push_image():
     for line in cmd.stdout:
         logger.log(line)
     cmd.wait()
-    rc = cmd.returncode
-    logger.log(f"process says: {rc}")
 
 
 def start_dockering():
@@ -41,3 +39,5 @@ def start_dockering():
     copy_server_build()
     make_image()
     push_image()
+
+    logger.log("If everything went alright, go to portainer and recreate the container on staging")
