@@ -1,0 +1,15 @@
+{
+  "unity_executable": "C:\\Program Files\\Unity\\Hub\\Editor\\2019.3.8f1\\Editor\\Unity.exe",
+  "project_path": "D:\\github\\corp-0\\unitystation\\UnityProject",
+  "target_platform": [
+    "StandaloneWindows64",
+    "StandaloneOSX",
+    "StandaloneLinux64"
+  ],
+  "license_file": "license.ulf",
+  "CDN_DOWNLOAD_URL": "https://unitystationfile.b-cdn.net/{}/{}/{}.zip",
+  "forkName": "UnityStationDevelop",
+  "output_dir": "D:\\github\\corp-0\\US13StagingManualBuilder\\builds",
+  "build_number_autoincrement": true,
+  "abort_on_build_fail": true
+}
