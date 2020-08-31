@@ -18,7 +18,7 @@ def make_command(target: str):
            f"-buildTarget {target} " \
            f"-projectPath \"{CONFIG['project_path']}\" " \
            f"-executeMethod BuildScript.BuildProject " \
-           f"-customBuildPath {os.path.join(CONFIG['output_dir'], target, exec_name[target])} " \
+           f"-customBuildPath \"{os.path.join(CONFIG['output_dir'], target, exec_name[target])}\" " \
            f"-customBuildName Unitysation "
 
 
