@@ -17,8 +17,7 @@ req_configs = ["unity_executable",
                "forkName",
                "output_dir"]
 
-optional_configs = ["abort_on_build_fail",
-                    "build_number_autoincrement"]
+optional_configs = ["abort_on_build_fail"]
 
 
 def load_envs_from_json():

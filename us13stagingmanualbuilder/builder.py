@@ -46,61 +46,25 @@ def build(command: str, target: str):
 
 
 def get_build_number():
-    logger.log("Getting build number from last sucessfull push from Github")
-    url = "https://api.github.com/repos/unitystation/unitystation/actions/runs"
+    logger.log("Getting build number from last merged pr")
+    url = "https://api.github.com/repos/unitystation/unitystation/pulls?state=closed"
     response = json.loads(requests.get(url).text)
-    build_number = 0
 
     if response is None:
         logger.log("GitHub API is not responding. Can't continue.")
         raise Exception("GitHub API unresponsive.")
 
-    for run in response["workflow_runs"]:
-        try:
-            if run["event"] == "push" and run["conclusion"] == "success":
-                build_number = run["run_number"]
-                break
-        except KeyError:
-            if run == response["workflow_runs"][-1]:
-                logger.log("No sucessfull push events found in gh api response, aborting.")
-                raise Exception("Be sucessful or die")
-
-    local = get_local_build_number()
-    if local is not None:
-        if build_number <= local:
-            logger.log("Build number is less than or equal to last cached number")
-            logger.log(f"Last run: {build_number} Last local build: {local}")
-
-            if CONFIG["build_number_autoincrement"]:
-                build_number = local + 1
-                logger.log(f"Making a new build number {build_number}")
-            else:
-                logger.log("Local auto increment is disabled. Can't continue!")
-                raise Exception("Found newer build number on local but autoincrement was disabled.")
-    else:
-        logger.log("There is no previous local build number")
+    build_number = 0
+    index = 0
+    while not build_number:
+        if response[index]["merged_at"] is not None:
+            build_number = response[index]["number"]
+        else:
+            index += 1
 
     CONFIG["build_number"] = build_number
-    write_local_build_number(build_number)
-    logger.log(f"Setting {build_number} as the build number...")
-
-
-def get_local_build_number():
-    try:
-        with open("build_number.txt") as bn:
-            buil_number = bn.read()
-    except FileNotFoundError:
-        return None
-    except Exception as e:
-        logger.log(str(e))
-        raise e
-
-    return int(buil_number.strip())
-
-
-def write_local_build_number(number: int):
-    with open("build_number.txt", "w") as bn:
-        bn.write(str(number))
+    logger.log(f"Setting build number to {build_number} from last merged pr:")
+    logger.log(f"\"{response[index]['tile']}\" by {response[index]['user']['login']}")
 
 
 def create_builds_folder():
