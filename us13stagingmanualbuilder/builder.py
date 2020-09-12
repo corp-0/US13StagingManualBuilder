@@ -64,7 +64,7 @@ def get_build_number():
 
     CONFIG["build_number"] = build_number
     logger.log(f"Setting build number to {build_number} from last merged pr:")
-    logger.log(f"\"{response[index]['tile']}\" by {response[index]['user']['login']}")
+    logger.log(f"\"{response[index]['title']}\" by {response[index]['user']['login']}")
 
 
 def create_builds_folder():
